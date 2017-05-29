@@ -229,7 +229,7 @@ class Grafo:
 		self.mystack = []
 		self.tempo = 0
 		self.vertex = {}
-		with open ('teste.csv', 'rU') as input:
+		with open ('stormofswords.csv', 'rU') as input:
 			spamreader = csv.reader(input)
 			for row in spamreader:
 				vaux1 = Vertice(row[0])
@@ -447,6 +447,8 @@ class Grafo:
 
 			UTILIZA u.dist como u.d
 			UTILIZA u.time como u.f
+			OBS: NAO FUNFO
+			PERGUNTA PRO KIKUTI DEPOIS
 
 			ARGS:
 			u: e o vertice visitado
@@ -459,7 +461,7 @@ class Grafo:
 		for v in self.vertex[u].get_adj():
 			if (not self.vertex[v].get_visitado()):
 				self.vertex[v].set_pred(u)
-				#self.articulation_point(v)
+				self.articulation_point(v)
 				if (self.vertex[u].get_pred() == None):
 					if (len(self.vertex[u].get_adj()) > 2):
 						print('Propriedade 1: u e raiz possui pelo menos 2 filhos')
@@ -479,10 +481,30 @@ class Grafo:
 		self.tempo += 1
 		self.vertex[u].set_time(self.tempo)
 
+	def ap(self, u):
+		''' METODO ALTERNARTIVO PARA O ARTICULATION_POINT
+		'''
+		self.vertex[u].set_visitado(True)
+		self.tempo += 1
+		self.vertex[u].set_dist(self.tempo)
+		self.vertex[u].set_low(self.tempo)
+		for v in self.vertex[u].get_adj():
+			if (not self.vertex[v].get_visitado()):
+				self.vertex[v].set_pred(u)
+				self.ap(v)
+				self.vertex[u].set_low(min(self.vertex[u].get_low(), self.vertex[v].get_low()))
+				if (self.vertex[u].pred == None and len(self.vertex[u].get_adj()) >= 2):
+					print('{} e raiz e ponto de articulacao'.format(self.vertex[u].get_nome()))
+				if (self.vertex[u].pred != None and
+					self.vertex[v].get_low() >= self.vertex[u].get_dist()):
+					print('{} nao e raiz mas um de seus filhos e bastardo'.format(self.vertex[u].get_nome()))
+			elif (v != self.vertex[u].get_pred()):
+				self.vertex[u].set_low(min(self.vertex[u].get_low(),
+										   self.vertex[v].get_dist()))
 
 meugrafo = Grafo()
-meugrafo.articulation_point('um')
+meugrafo.ap('Aemon')
 #meugrafo.caminho_bfs('Aemon', 'Stannis')
 #print(meugrafo.bipartido('Aemon'))
 #meugrafo.stack_dfs('Aemon')
-# meugrafo.dfs('um')
+#meugrafo.dfs('um')
