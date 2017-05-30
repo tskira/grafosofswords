@@ -7,16 +7,18 @@
 #		 THIAGO KIRA ra78750
 #ARQUIVO DE ENTRADA:
 #		 stormofswords.csv
-#		 para testar o codigo use o grafo teste.csv
 #FUNCOES:
 #		 BFS
 #		 CAMINHO BFS
 #		 BIPARTIDO
 #		 DFS (corrigido)
-#		 STACK
+#		 STACK DFS
 #		 C_COMPONENTS
-#		 ARTICULATION_POINT
+#		 ARTICULATION_POINT (VERSAO SLIDES)
+#		 VERSAO ALTERNATIVA
 # 		 PONTE
+#		 DIJKSTRA
+#		 CAMINHO_DIJKSTRA
 
 import Queue
 import csv
@@ -249,7 +251,6 @@ class Grafo:
 				if (vaux1.get_nome() not in self.vertex[vaux2.get_nome()].get_adj()):
 					self.vertex[vaux2.get_nome()].add_adj(vaux1.get_nome())
 
-
 	def print_grafo(self):
 		''' METODO PARA IMPRIMIR GRAFO
 		'''
@@ -259,7 +260,6 @@ class Grafo:
 			print('ADJACENTES ->')
 			for i in self.vertex[k].get_adj():
 				self.vertex[i].print_vertice()
-
 
 	def init_grafo(self):
 		''' METODO PARA INICIALIZAR GRAFO
@@ -316,7 +316,22 @@ class Grafo:
 		if (s == v):
 			print(self.vertex[s].get_nome())
 		else:
-			self.caminho_bfs(s, self.vertex[v].get_pred())
+			self.caminho_bfs(s, self.vertex[v].get_pred().get_nome())
+			print(self.vertex[v].get_nome())
+
+	def caminho_djikstra(self,s,v):
+
+		''' IMPRIME O CAMINHO DO VERTICE ATE DETERMINADO DESTINO
+
+			ARGS:
+			s: e o vertice origem
+			v: e o vertice destino
+		'''
+
+		if (s == v):
+			print(self.vertex[s].get_nome())
+		else:
+			self.caminho_djikstra(s, self.vertex[v].get_pred())
 			print(self.vertex[v].get_nome())
 
 	def bipartido(self, s):
@@ -420,7 +435,6 @@ class Grafo:
 			if (j.get_visitado()):
 				print('N: {} | T.d: {}	| T.f: {} | P: {}'.format(j.get_nome(), j.get_dist(), j.get_time(), j.get_pred()))
 
-
 	def c_components(self):
 		''' METODO PARA VERIFICAR OS COMPONENTES CONEXOS DO GRAFO
 
@@ -449,7 +463,7 @@ class Grafo:
 
 	def pontos_articulacao(self):
 		''' METODO ORIGINAL DOS SLIDES
-			APARENTEMENTE NAO TA FUNFANDO
+			AVERIGUAR RESPOSTAS
 		'''
 		self.init_grafo()
 		for i in self.vertex.keys():
@@ -471,7 +485,6 @@ class Grafo:
 			ARGS:
 			u: e o vertice visitado
 		'''
-
 		self.tempo += 1
 		self.vertex[u].set_visitado(True)
 		self.vertex[u].set_low(self.tempo)
@@ -497,9 +510,6 @@ class Grafo:
 		self.tempo += 1
 		self.vertex[u].set_time(self.tempo)
 
-
-
-
 	def articulation_alternativo(self):
 		''' METODO ALTERNARTIVO PARA O articulation_point
 		'''
@@ -511,7 +521,6 @@ class Grafo:
 
 		for j in enumerate(self.myset):
 			print(j)
-
 
 	def ap(self, u):
 		''' METODO ALTERNARTIVO PARA O ARTICULATION_POINT
@@ -533,7 +542,6 @@ class Grafo:
 			elif (v != self.vertex[u].get_pred()):
 				self.vertex[u].set_low(min(self.vertex[u].get_low(),
 										   self.vertex[v].get_dist()))
-
 
 	def ponte(self):
 		''' METODO VERTIFICA PONTES DE UM GRAFO
@@ -626,18 +634,15 @@ class Grafo:
 			slist.append(self.vertex[u].get_nome())
 			for v in self.vertex[u].get_adj():
 				self.relax(u,v)
-		self.caminho_bfs(s,w)
 		return (self.vertex[w].get_dist())
 
+#TESTE DAS FUNCOES:
 
-
-meugrafo = Grafo()
-meugrafo.ponte()
-meugrafo.pontos_articulacao()
-meugrafo.articulation_alternativo()
-print(meugrafo.djikstra('Elia', 'Lothar'))
-#meugrafo.caminho_bfs('Elia', 'Lothar')
-#meugrafo.djikstra('Elia', 'Lothar')
-#print(meugrafo.bipartido('Aemon'))
-#meugrafo.stack_dfs('Aemon')
-#meugrafo.dfs('um')
+goftrhones = Grafo()
+goftrhones.articulation_alternativo()
+goftrhones.pontos_articulacao()
+goftrhones.ponte()
+print('CAMINHO DJIKSTRA')
+print('DIST: {}'.format(goftrhones.djikstra('Elia', 'Lothar')))
+print('CAMINHO: ')
+goftrhones.caminho_djikstra('Elia', 'Lothar')
