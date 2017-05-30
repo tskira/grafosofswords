@@ -1,8 +1,9 @@
+'''
 #TRABALHO 1 DE GRAFOS
 #EXERCICIO: STORMSOFSWORDS
 #PYTHON V 2.7.13
 #UBUNTU 17.04
-#ALUNOS: LEONARDO LARANIAGA ra94985
+#ALUNOS: 	 LEONARDO LARANIAGA ra94985
 #		 WELLINGTON TATSUNORI ra94595
 #		 THIAGO KIRA ra78750
 #ARQUIVO DE ENTRADA:
@@ -15,11 +16,11 @@
 #		 STACK DFS
 #		 C_COMPONENTS
 #		 ARTICULATION_POINT (VERSAO SLIDES)
-#		 VERSAO ALTERNATIVA
+#		 ARTICULATION_POINT VERSAO ALTERNATIVA
 # 		 PONTE
 #		 DIJKSTRA
 #		 CAMINHO_DIJKSTRA
-
+'''
 import Queue
 import csv
 import types
@@ -636,9 +637,10 @@ class Grafo:
 				self.relax(u,v)
 		return (self.vertex[w].get_dist())
 
-#TESTE DAS FUNCOES:
+#INICIO:
 
 goftrhones = Grafo()
+print __doc__
 goftrhones.articulation_alternativo()
 goftrhones.pontos_articulacao()
 goftrhones.ponte()
