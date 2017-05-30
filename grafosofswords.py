@@ -2,9 +2,9 @@
 #EXERCICIO: STORMSOFSWORDS
 #PYTHON V 2.7.13
 #UBUNTU 17.04
-#ALUNOS: LEONARDO LARANIAGA
-#		 WELLINGTON TATSUNORI
-#		 THIAGO KIRA
+#ALUNOS: LEONARDO LARANIAGA ra94985
+#		 WELLINGTON TATSUNORI ra94595
+#		 THIAGO KIRA ra78750
 #ARQUIVO DE ENTRADA:
 #		 stormofswords.csv
 #		 para testar o codigo use o grafo teste.csv
@@ -316,7 +316,7 @@ class Grafo:
 		if (s == v):
 			print(self.vertex[s].get_nome())
 		else:
-			self.caminho_bfs(s, self.vertex[v].get_pred().get_nome())
+			self.caminho_bfs(s, self.vertex[v].get_pred())
 			print(self.vertex[v].get_nome())
 
 	def bipartido(self, s):
@@ -578,7 +578,7 @@ class Grafo:
 		'''
 
 		for v in self.vertex.keys():
-			self.vertex[v].set_dist(100)
+			self.vertex[v].set_dist(sys.maxint)
 			self.vertex[v].set_pred(None)
 		self.vertex[s].set_dist(0)
 
@@ -613,6 +613,7 @@ class Grafo:
 
 			ARGS:
 			s: vertice origem
+			w: vertice destino
 		'''
 
 		slist = []
@@ -625,17 +626,18 @@ class Grafo:
 			slist.append(self.vertex[u].get_nome())
 			for v in self.vertex[u].get_adj():
 				self.relax(u,v)
-
+		self.caminho_bfs(s,w)
 		return (self.vertex[w].get_dist())
+
+
 
 meugrafo = Grafo()
 meugrafo.ponte()
 meugrafo.pontos_articulacao()
 meugrafo.articulation_alternativo()
 print(meugrafo.djikstra('Elia', 'Lothar'))
-meugrafo.bfs('Elia')
-
-#meugrafo.caminho_bfs('Aemon', 'Stannis')
+#meugrafo.caminho_bfs('Elia', 'Lothar')
+#meugrafo.djikstra('Elia', 'Lothar')
 #print(meugrafo.bipartido('Aemon'))
 #meugrafo.stack_dfs('Aemon')
 #meugrafo.dfs('um')
