@@ -219,18 +219,20 @@ class Grafo:
 	'''	CLASSE GRAFO
 
 		CLASSE PARA REPRESENTACAO DOS GRAFOS
-		ARMAZENA EM DICIONARIO
+		ARMAZENA OS VERTICES DO GRAFO EM DICIONARIO, NO FORMATO:
+		'NOME' : 'VERTICE(OBJETO)'
 
 		ATRIBUTOS:
-		vertex: lista com os vertices do Grafo
+		vertex: e o dicionario com os vertices do Grafo
+		cc: variavel para identificar os componentes conexos
+		mystack: uma lista pra usar como PILHA
+		tempo: variavel para a implementacao de alguns dos algoritmos de GRAFOS
+		myset: so para guardar as pontes sem repeticao
 	'''
 	def __init__(self):
 		''' METODO CONSTRUTOR DA CLASSE
-
-			O GRAFO E ESTRUTURADO NA FORMA DE DICIONARIO
-			NO FORMATO {'NOME':'OBJETO'}
-
 		'''
+
 		self.cc = 0
 		self.mystack = []
 		self.tempo = 0
