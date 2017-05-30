@@ -2,23 +2,26 @@
 #EXERCICIO: STORMSOFSWORDS
 #PYTHON V 2.7.13
 #UBUNTU 17.04
-#ALUNOS: LEONARDO
-#		 TATSU
+#ALUNOS: LEONARDO LARANIAGA
+#		 WELLINGTON TATSUNORI
 #		 THIAGO KIRA
 #ARQUIVO DE ENTRADA:
 #		 stormofswords.csv
-#		 para teste use o grafo teste.csv
-#FUNCOES
+#		 para testar o codigo use o grafo teste.csv
+#FUNCOES:
 #		 BFS
 #		 CAMINHO BFS
 #		 BIPARTIDO
 #		 DFS (corrigido)
-#		 STACK DFS
-
+#		 STACK
+#		 C_COMPONENTS
+#		 ARTICULATION_POINT
+# 		 PONTE
 
 import Queue
 import csv
 import types
+import sys
 
 class Vertice:
 	''' CLASSE VERTICE
@@ -229,6 +232,7 @@ class Grafo:
 		self.mystack = []
 		self.tempo = 0
 		self.vertex = {}
+		self.myset = set({})
 		with open ('stormofswords.csv', 'rU') as input:
 			spamreader = csv.reader(input)
 			for row in spamreader:
@@ -265,6 +269,7 @@ class Grafo:
 		self.cc = 0
 		self.mystack[:] = []
 		self.tempo = 0
+		self.myset.clear()
 		for k in self.vertex.values():
 			k.set_visitado(False)
 			k.set_pred(None)
@@ -442,6 +447,19 @@ class Grafo:
 			if (not self.vertex[k].get_visitado()):
 				self.c_visit(self.vertex[k])
 
+	def pontos_articulacao(self):
+		''' METODO ORIGINAL DOS SLIDES
+			APARENTEMENTE NAO TA FUNFANDO
+		'''
+		self.init_grafo()
+		for i in self.vertex.keys():
+			if (not self.vertex[i].get_visitado()):
+				self.articulation_point(i)
+		print ('PONTOS DE ARTICULACAO: VERSAO ORIGINAL')
+
+		for j in enumerate(self.myset):
+			print(j)
+
 	def articulation_point(self, u):
 		''' METODO PARA IDENTIFICAR PONTOS DE articulacao
 
@@ -453,7 +471,7 @@ class Grafo:
 			ARGS:
 			u: e o vertice visitado
 		'''
-		self.init_grafo()
+
 		self.tempo += 1
 		self.vertex[u].set_visitado(True)
 		self.vertex[u].set_low(self.tempo)
@@ -463,15 +481,13 @@ class Grafo:
 				self.vertex[v].set_pred(u)
 				self.articulation_point(v)
 				if (self.vertex[u].get_pred() == None):
-					if (len(self.vertex[u].get_adj()) > 2):
-						print('Propriedade 1: u e raiz possui pelo menos 2 filhos')
-						print('{} e articulacao'.format(self.vertex[u].get_nome()))
+					if (len(self.vertex[u].get_adj()) >= 2):
+						self.myset.add(u)
 				else:
 					self.vertex[u].set_low(min(self.vertex[u].get_low(),
 											   self.vertex[v].get_low()))
 					if (self.vertex[v].get_low() >= self.vertex[u].get_dist()):
-						print('Propriedade 2: u possui descendente v com v.low >= u.d')
-						print('{} e ponto de articulacao'.format(self.vertex[u].get_nome()))
+						self.myset.add(u)
 			else:
 				if (v != self.vertex[u].get_pred() and
 					self.vertex[v].get_dist() < self.vertex[u].get_dist()):
@@ -480,6 +496,22 @@ class Grafo:
 
 		self.tempo += 1
 		self.vertex[u].set_time(self.tempo)
+
+
+
+
+	def articulation_alternativo(self):
+		''' METODO ALTERNARTIVO PARA O articulation_point
+		'''
+		self.init_grafo()
+		for i in self.vertex.keys():
+			if (not self.vertex[i].get_visitado()):
+				self.ap(i)
+		print ('PONTOS DE ARTICULACAO: ')
+
+		for j in enumerate(self.myset):
+			print(j)
+
 
 	def ap(self, u):
 		''' METODO ALTERNARTIVO PARA O ARTICULATION_POINT
@@ -494,16 +526,115 @@ class Grafo:
 				self.ap(v)
 				self.vertex[u].set_low(min(self.vertex[u].get_low(), self.vertex[v].get_low()))
 				if (self.vertex[u].pred == None and len(self.vertex[u].get_adj()) >= 2):
-					print('{} e raiz e ponto de articulacao'.format(self.vertex[u].get_nome()))
+					self.myset.add(u)
 				if (self.vertex[u].pred != None and
 					self.vertex[v].get_low() >= self.vertex[u].get_dist()):
-					print('{} nao e raiz mas um de seus filhos e bastardo'.format(self.vertex[u].get_nome()))
+					self.myset.add(u)
 			elif (v != self.vertex[u].get_pred()):
 				self.vertex[u].set_low(min(self.vertex[u].get_low(),
 										   self.vertex[v].get_dist()))
 
+
+	def ponte(self):
+		''' METODO VERTIFICA PONTES DE UM GRAFO
+		'''
+
+		self.init_grafo()
+		for i in self.vertex.keys():
+			if (not self.vertex[i].get_visitado()):
+				self.ponte_visit(i)
+		print ('PONTES: ')
+		for j in enumerate(self.myset):
+			print(j)
+
+	def ponte_visit(self, u):
+		''' METODO PARA VERIFICAR AS PONTES DE UM GRAFO
+
+			ARGS:
+			u: vertice raiz
+		'''
+		self.tempo += 1
+		self.vertex[u].set_visitado(True)
+		self.vertex[u].set_low(self.tempo)
+		self.vertex[u].set_dist(self.tempo)
+		for v in self.vertex[u].get_adj():
+			if (not self.vertex[v].get_visitado()):
+				self.vertex[v].set_pred(u)
+				self.ponte_visit(v)
+				self.vertex[u].set_low(min(self.vertex[u].get_low(),
+										   self.vertex[v].get_low()))
+				if (self.vertex[v].get_low() > self.vertex[u].get_dist() ):
+					resp = u + '->' + v
+					self.myset.add(str(resp))
+			elif (v != self.vertex[u].get_pred() and
+				  self.vertex[v].get_dist() < self.vertex[u].get_dist()):
+				  self.vertex[u].set_low(min(self.vertex[u].get_low(),
+				  						     self.vertex[v].get_dist()))
+		self.tempo += 1
+		self.vertex[u].set_time(self.tempo)
+
+	def init_ssource(self, s):
+		''' METODO INITIALIZE SINGLE SOURCE
+		'''
+
+		for v in self.vertex.keys():
+			self.vertex[v].set_dist(100)
+			self.vertex[v].set_pred(None)
+		self.vertex[s].set_dist(0)
+
+	def relax(self, u,v):
+		''' METODO RELAX
+		'''
+
+		if (self.vertex[v].get_dist() > (self.vertex[u].get_dist() + 1) ):
+			self.vertex[v].set_dist(self.vertex[u].get_dist() + 1)
+			self.vertex[v].set_pred(u)
+
+	def extract_min(self, q):
+		''' METODO EXTRACT MINIMO
+
+			PARA EXTRAIR O VALOR DA LISTA COM MENOR DISTANCIA
+			(TECNICA GULOSA)
+
+			RETURNS:
+			retorna o nome, na fila, do vertice com menor distancia
+		'''
+		menor = self.vertex[q[0]].get_dist()
+		nmenor = q[0]
+		for k in q:
+			if (self.vertex[k].get_dist() < menor):
+				menor = self.vertex[k].get_dist()
+				nmenor = self.vertex[k].get_nome()
+		q.remove(nmenor)
+		return (nmenor)
+
+	def djikstra(self, s, w):
+		''' METODO PARA CAMINHO MINIMO: ALGORITMO DE DJIkSTRA
+
+			ARGS:
+			s: vertice origem
+		'''
+
+		slist = []
+		self.init_grafo()
+		self.init_ssource(s)
+		for k in self.vertex.keys():
+			self.mystack.append(k)
+		while (len(self.mystack) > 0):
+			u = self.extract_min(self.mystack)
+			slist.append(self.vertex[u].get_nome())
+			for v in self.vertex[u].get_adj():
+				self.relax(u,v)
+
+		return (self.vertex[w].get_dist())
+
 meugrafo = Grafo()
-meugrafo.ap('Aemon')
+meugrafo.ponte()
+meugrafo.pontos_articulacao()
+meugrafo.articulation_alternativo()
+print(meugrafo.djikstra('Elia', 'Lothar'))
+meugrafo.bfs('Elia')
+
 #meugrafo.caminho_bfs('Aemon', 'Stannis')
 #print(meugrafo.bipartido('Aemon'))
 #meugrafo.stack_dfs('Aemon')
