@@ -472,7 +472,7 @@ class Grafo:
 		for i in self.vertex.keys():
 			if (not self.vertex[i].get_visitado()):
 				self.articulation_point(i)
-		print ('PONTOS DE ARTICULACAO: VERSAO ORIGINAL')
+		print ('PONTOS DE ARTICULACAO: VERSAO ORIGINAL #### ESTA DANDO A RESPOSTA ERRADA')
 
 		for j in enumerate(self.myset):
 			print(j)
@@ -484,6 +484,8 @@ class Grafo:
 			UTILIZA u.time como u.f
 			OBS: NAO FUNFO
 			PERGUNTA PRO KIKUTI DEPOIS
+			AT: CONTINUA NAO FUNFANDO
+			EU NAO FACO A MENOR IDEIA DO QUE ESTA ACONTECENDO
 
 			ARGS:
 			u: e o vertice visitado
@@ -496,12 +498,13 @@ class Grafo:
 			if (not self.vertex[v].get_visitado()):
 				self.vertex[v].set_pred(u)
 				self.articulation_point(v)
+				self.vertex[u].set_low(min(self.vertex[u].get_low(),
+										   self.vertex[v].get_low()))
 				if (self.vertex[u].get_pred() == None):
-					if (len(self.vertex[u].get_adj()) >= 2):
+					if (self.vertex[v].get_nome() != self.vertex[self.vertex[u].get_adj()[0]].get_nome()):
 						self.myset.add(u)
 				else:
-					self.vertex[u].set_low(min(self.vertex[u].get_low(),
-											   self.vertex[v].get_low()))
+
 					if (self.vertex[v].get_low() >= self.vertex[u].get_dist()):
 						self.myset.add(u)
 			else:
@@ -537,7 +540,7 @@ class Grafo:
 				self.vertex[v].set_pred(u)
 				self.ap(v)
 				self.vertex[u].set_low(min(self.vertex[u].get_low(), self.vertex[v].get_low()))
-				if (self.vertex[u].pred == None and len(self.vertex[u].get_adj()) >= 2):
+				if (self.vertex[u].pred == None and self.vertex[v].get_nome() != self.vertex[self.vertex[u].get_adj()[0]].get_nome()):
 					self.myset.add(u)
 				if (self.vertex[u].pred != None and
 					self.vertex[v].get_low() >= self.vertex[u].get_dist()):
@@ -545,7 +548,6 @@ class Grafo:
 			elif (v != self.vertex[u].get_pred()):
 				self.vertex[u].set_low(min(self.vertex[u].get_low(),
 										   self.vertex[v].get_dist()))
-
 	def ponte(self):
 		''' METODO VERTIFICA PONTES DE UM GRAFO
 		'''
@@ -606,6 +608,7 @@ class Grafo:
 
 			PARA EXTRAIR O VALOR DA LISTA COM MENOR DISTANCIA
 			(TECNICA GULOSA)
+			O(n), NAO UTILIZEI O HEAP POR PREGUICA MESMO
 
 			RETURNS:
 			retorna o nome, na fila, do vertice com menor distancia
@@ -638,6 +641,10 @@ class Grafo:
 			for v in self.vertex[u].get_adj():
 				self.relax(u,v)
 		return (self.vertex[w].get_dist())
+
+	def teste(self, w):
+		print(self.vertex[self.vertex[w].get_adj()[0]].get_nome())
+
 
 #INICIO:
 
